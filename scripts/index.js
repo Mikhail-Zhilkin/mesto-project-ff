@@ -8,12 +8,13 @@ const cardsList = document.querySelector('.places__list');
 
 // @todo: Функция создания карточки
 
-function createCard(data, del) {
+function createCard(data, functionDelete) {
     const card = cardTemplate.cloneNode(true);
 
     card.querySelector('.card__image').src = data.link;
+    card.querySelector('.card__image').alt = `${data.name}: фотография`;
     card.querySelector('.card__title').textContent = data.name;
-    card.querySelector('.card__delete-button').addEventListener('click', (e) => del(e));
+    card.querySelector('.card__delete-button').addEventListener('click', functionDelete);
 
     return card;
 }
