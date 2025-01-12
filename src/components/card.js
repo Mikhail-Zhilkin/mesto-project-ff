@@ -1,24 +1,30 @@
 export function createCard(data, functionDelete, functionLike, functionOpenImage) {
-    const card = document.querySelector('#card-template').content.cloneNode(true);
+  const card = document.querySelector("#card-template").content.cloneNode(true);
+  const cardImage = card.querySelector(".card__image");
+  const cardTitle = card.querySelector(".card__title");
+  const cardDeleteButton = card.querySelector(".card__delete-button");
+  const cardLikeButton = card.querySelector(".card__like-button");
 
-    card.querySelector('.card__image').src = data.link;
-    card.querySelector('.card__image').alt = `${data.name}: фотография`;
-    card.querySelector('.card__title').textContent = data.name;
-    card.querySelector('.card__delete-button').addEventListener('click', functionDelete);
+  cardImage.src = data.link;
+  cardImage.alt = `${data.name}: фотография`;
+  cardTitle.textContent = data.name;
+  cardDeleteButton.addEventListener("click", functionDelete);
 
-    document.querySelector('.places__list').addEventListener('click', functionLike);
+  cardLikeButton.addEventListener("click", functionLike);
 
-    card.querySelector('.card__image').addEventListener('click', () => functionOpenImage(data.link, data.name));
+  cardImage.addEventListener("click", () =>
+    functionOpenImage(data.link, data.name)
+  );
 
-    return card;
+  return card;
 };
 
 export function deleteCard(evt) {
-    evt.target.closest('li').remove();
+  evt.target.closest("li").remove();
 };
 
-export function handlerLike (evt) {
-    if(evt.target.classList.contains('card__like-button')){
-    evt.target.classList.toggle('card__like-button_is-active')
-    };
+export function handlerLike(evt) {
+  if (evt.target.classList.contains("card__like-button")) {
+    evt.target.classList.toggle("card__like-button_is-active");
+  };
 };
