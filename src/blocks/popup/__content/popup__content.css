@@ -1,3 +1,7 @@
+div.popup__content-custom {
+  min-height: 181px;
+}
+
 .popup__content {
   max-width: 430px;
   width: 100%;
