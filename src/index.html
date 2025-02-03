@@ -59,7 +59,7 @@
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Новое место</h3>
-      <form class="popup__form" name="new-place">
+      <form class="popup__form" name="new-place" novalidate>
         <input id="placeName-input" type="text" name="placeName" class="popup__input popup__input_type_card-name" placeholder="Название" 
           minlength="2" 
           maxlength="30"
@@ -84,11 +84,18 @@
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Обновить аватар</h3>
-      <form class="popup__form" name="new-avatar">
+      <form class="popup__form" name="new-avatar" novalidate>
         <input id="avatar-input" type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
         <span class="avatar-input-error popup__input-error"></span>
         <button type="submit" class="button popup__button">Сохранить</button>
       </form>
+    </div>
+  </div>
+  <div class="popup popup_type_delete-card">
+    <div class="popup__content popup__content-custom">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Вы уверены?</h3>
+      <button type="submit" class="button popup__button" data-card="">Да</button>
     </div>
   </div>
 </div>
@@ -106,13 +113,6 @@
       <div class="card__like">
         <button type="button" class="card__like-button"></button>
         <span class="card__like-counter"></span>
-      </div>
-    </div>
-    <div class="popup popup_type_delete-card">
-      <div class="popup__content popup__content-custom">
-        <button type="button" class="popup__close"></button>
-        <h3 class="popup__title">Вы уверены?</h3>
-        <button type="submit" class="button popup__button">Да</button>
       </div>
     </div>
   </li>

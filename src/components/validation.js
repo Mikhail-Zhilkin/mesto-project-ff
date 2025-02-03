@@ -1,12 +1,3 @@
-export const validationConfig = ({
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible'
-  });
-
 const showInputError = (formElement, inputElement, errorMessege, validationConfig) => { 
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(validationConfig.inputErrorClass); 
@@ -70,9 +61,10 @@ function toggleButtonState(inputList, buttonElement) {
 
 export function clearValidation(profileForm, validationConfig) {
     const buttonElement= profileForm.querySelector(validationConfig.submitButtonSelector);
-    buttonElement.setAttribute('disabled', '')
-
     const inputElements = Array.from(profileForm.querySelectorAll(validationConfig.inputSelector));
+
+    toggleButtonState(inputElements, buttonElement)
+
     inputElements.forEach((inputElement) => {
         hideInputError(profileForm, inputElement, validationConfig)
     }) 

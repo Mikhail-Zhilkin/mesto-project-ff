@@ -1,45 +1,28 @@
-import { openPopup } from "./modal";
-import { closePopup } from "./modal";
-import { deleteCardApi, deleteLike, putLike } from "./api";
+import { deleteLike, putLike } from "./api";
 
 
 export function createCard(data, userId, functionDelete, functionLike, functionOpenImage) {
   const card = document.querySelector("#card-template").content.cloneNode(true);
+  const cardItem = card.querySelector(".card")
   const cardImage = card.querySelector(".card__image");
   const cardTitle = card.querySelector(".card__title");
   const cardDeleteButton = card.querySelector(".card__delete-button");
   const cardLikeButton = card.querySelector(".card__like-button");
   const cardLikeCounter = card.querySelector(".card__like-counter");
-  const popupTypeDeleteCard = card.querySelector('.popup_type_delete-card');
-  const popupTypeDeleteCardButton = card.querySelector('.popup__button')
-  const buttonClosePopupTypeDeleteCard = card.querySelector(".popup__close");
 
   cardImage.src = data.link;
   cardImage.alt = `${data.name}: фотография`;
   cardTitle.textContent = data.name;
   cardLikeCounter.textContent = data.likes.length;
+  cardItem.id = data._id;
 
   if(data.owner._id !== userId) {
     cardDeleteButton.remove()
   } else {
-    popupTypeDeleteCardButton.addEventListener('click', (evt) => {
-      functionDelete(evt, data._id)
+    cardDeleteButton.addEventListener('click', () => {
+      functionDelete(data)
     })
-  }
-
-  cardDeleteButton.addEventListener("click", () => {
-    openPopup(popupTypeDeleteCard);
-  });
-  buttonClosePopupTypeDeleteCard.addEventListener('click', () => {
-    closePopup(popupTypeDeleteCard);
-  })
-  popupTypeDeleteCard.addEventListener("click", (evt) => {
-   if (evt.target.contains(popupTypeDeleteCard)) {
-     closePopup(popupTypeDeleteCard);
-   };
- });
-
-  popupTypeDeleteCard.classList.add("popup_is-animated");
+  };
 
   const isMyLike = data.likes.some((item) => {
     return item._id === userId
@@ -58,16 +41,6 @@ export function createCard(data, userId, functionDelete, functionLike, functionO
   );
 
   return card;
-};
-
-export function deleteCard(evt, cardId) {
-  deleteCardApi(cardId)
-    .then(() => {
-      evt.target.closest("li").remove();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
 };
 
 export function handlerLike(evt, likeCounter, cardId) {

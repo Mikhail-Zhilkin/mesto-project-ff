@@ -1,18 +1,16 @@
 import "./pages/index.css";
 import { createCard } from "./components/card.js";
-import { deleteCard } from "./components/card.js";
 import { handlerLike } from "./components/card.js";
 import { openPopup } from "./components/modal.js";
 import { closePopup } from "./components/modal.js";
-import { getInfo, getCards, editProfile, addCard, updateAvatar } from "./components/api.js";
-import { validationConfig } from "./components/validation.js";
+import { getInfo, getCards, editProfile, addCard, deleteCardApi, updateAvatar } from "./components/api.js";
 import { enableValidation } from "./components/validation.js";
 import { clearValidation } from "./components/validation.js";
 
 const cardsList = document.querySelector(".places__list");
-const popupImage = document.querySelector(".popup__image");
-const popupCaption = document.querySelector(".popup__caption");
 const popupTypeImage = document.querySelector(".popup_type_image");
+const popupImage = popupTypeImage.querySelector(".popup__image");
+const popupTypeImageCaption = popupTypeImage.querySelector(".popup__caption");
 const popupTypeEdit = document.querySelector(".popup_type_edit");
 const popupTypeEditButton = document.querySelector(".profile__edit-button");
 const buttonClosePopupTypeEdit = popupTypeEdit.querySelector(".popup__close");
@@ -35,8 +33,19 @@ const popupTypeNewAvatar = document.querySelector(".popup_type_new-avatar");
 const buttonClosePopupTypeNewAvatar = popupTypeNewAvatar.querySelector(".popup__close");
 const formNewAvatar = document.querySelector('form[name="new-avatar"]');
 const newAvatarInput = formNewAvatar.elements.link;
-const formNewAvatarSubmit = formNewAvatar.querySelector(".popup__button")
+const formNewAvatarSubmit = formNewAvatar.querySelector(".popup__button");
+const popupTypeDeleteCard = document.querySelector('.popup_type_delete-card');
+const popupTypeDeleteCardButton = popupTypeDeleteCard.querySelector('.popup__button')
+const buttonClosePopupTypeDeleteCard = popupTypeDeleteCard.querySelector(".popup__close");
 let userId = '';
+const validationConfig = ({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+});
 
 enableValidation(validationConfig);
 
@@ -71,13 +80,12 @@ function handleFormNewAvatarSubmit(evt) {
   updateAvatar(newAvatarInput.value)
     .then((res) => {
       profileImage.setAttribute('style', `background-image: url('${res.avatar}')`);
+      closePopup(popupTypeNewAvatar);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => renderLoading(formNewAvatarSubmit), false);
-
-  closePopup(popupTypeEdit);
 
   formProfile.reset();
 };
@@ -106,13 +114,12 @@ function handleProfileFormSubmit(evt) {
     .then((userInfo) => {
       profileTitle.textContent = userInfo.name
       profileDescription.textContent = userInfo.about
+      closePopup(popupTypeEdit);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => renderLoading(formProfileSubmit, false));
-
-  closePopup(popupTypeEdit);
 
   formProfile.reset();
 };
@@ -147,13 +154,12 @@ function handleFormNewPlaceSubmit(evt) {
     .then((cardData) => {
       const cardElement = createCard(cardData, userId, deleteCard, handlerLike, openImage);
       cardsList.prepend(cardElement);
+      closePopup(popupTypeNewCard);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => renderLoading(formNewPlaceSubmit, false));
-
-  closePopup(popupTypeNewCard);
 
   formNewPlace.reset();
 };
@@ -173,7 +179,7 @@ popupTypeNewCard.addEventListener("click", (evt) => {
 function openImage(src, name) {
   popupImage.src = src;
   popupImage.alt = `${name}: фотография`;
-  popupCaption.textContent = name;
+  popupTypeImageCaption.textContent = name;
 
   openPopup(popupTypeImage);
 }
@@ -190,6 +196,36 @@ popupTypeImage.addEventListener("click", (evt) => {
   };
 });
 
+function deleteCard(card) {
+  openPopup(popupTypeDeleteCard);
+  popupTypeDeleteCardButton.dataset.card = card._id;
+}
+
+function hundleDeleteCard() {
+  const card = popupTypeDeleteCardButton.dataset.card
+
+  deleteCardApi(card)
+    .then(() => {
+      document.getElementById(card).remove();
+      popupTypeDeleteCardButton.dataset.card = "";
+      closePopup(popupTypeDeleteCard);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+popupTypeDeleteCardButton.addEventListener("click", hundleDeleteCard);
+
+buttonClosePopupTypeDeleteCard.addEventListener('click', () => {
+  closePopup(popupTypeDeleteCard);
+})
+popupTypeDeleteCard.addEventListener("click", (evt) => {
+ if (evt.target.contains(popupTypeDeleteCard)) {
+   closePopup(popupTypeDeleteCard);
+ };
+});
+
 function addAnimation(popup) {
   if (popup.classList.contains("popup")) {
     popup.classList.add("popup_is-animated");
@@ -200,6 +236,7 @@ addAnimation(popupTypeEdit);
 addAnimation(popupTypeNewCard);
 addAnimation(popupTypeImage); 
 addAnimation(popupTypeNewAvatar);
+addAnimation(popupTypeDeleteCard);
 
 Promise.all([getInfo(), getCards()]) 
   .then((res) => { 
